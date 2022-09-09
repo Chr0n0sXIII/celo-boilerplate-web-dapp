@@ -1,3 +1,7 @@
+# Introduction
+
+Celo Test market is a basic Dapp based off of the boilerplate code that allows user to sell various items in a fixed quantitiy. The user can also add various items to the block chain, view the quantity of an item remaining as well as search various items.
+
 # Install
 
 ```
