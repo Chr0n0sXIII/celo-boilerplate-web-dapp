@@ -37,6 +37,11 @@ contract Marketplace {
 
     mapping (uint => Product) internal products;
 
+    modifier onlyOwner(uint _index){
+        require(msg.sender == products[_index].owner, "only Owner can access this function");
+        _;
+    }
+
     function writeProduct(
         string memory _name,
         string memory _image,
@@ -61,6 +66,30 @@ contract Marketplace {
         );
         productsLength++;
     }
+
+    function buyProduct(uint _index) public payable  {
+        require(
+          IERC20Token(cUsdTokenAddress).transferFrom(
+            msg.sender,
+            products[_index].owner,
+            products[_index].logistics.price
+          ),
+          "Transfer failed."
+        );
+        products[_index].logistics.sold++;
+        products[_index].logistics.quantity--;
+    }
+
+    function addStock(uint _index, uint _quantity) pulbic onlyOwner(_index){
+        products[_index].logistics.quantity += _quantity;
+
+    }
+
+    function changePrice(uint _index, uint _price) public onlyOwner(_index){
+        products[_index].logistics.price = _price;
+    }
+
+    
     function readLogistics(uint _index)public view returns(string memory){
             string memory temp;
             uint val;
@@ -104,18 +133,6 @@ contract Marketplace {
         );
     }
    
-    function buyProduct(uint _index) public payable  {
-        require(
-          IERC20Token(cUsdTokenAddress).transferFrom(
-            msg.sender,
-            products[_index].owner,
-            products[_index].logistics.price
-          ),
-          "Transfer failed."
-        );
-        products[_index].logistics.sold++;
-        products[_index].logistics.quantity--;
-    }
     
     function getProductsLength() public view returns (uint) {
         return (productsLength);
